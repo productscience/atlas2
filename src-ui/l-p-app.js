@@ -125,6 +125,7 @@ class MainApp extends React.Component {
             }/>
             <Route path="/(workspace|fixit)/:workspaceID" render={(props) => {
                   if(!loggedIn) {
+              		auth.next(props.location, props.history);
                     return AuthRedirect;
                   }
                   const workspaceID = props.match.params.workspaceID;
@@ -156,12 +157,16 @@ class MainApp extends React.Component {
             </Route>
             <Route exact path="/map/:mapID"
                 render={
-                  (props) =>
-                  (loggedIn ? <MapEditorPage
+                (props) => {
+   		         if (!loggedIn) {
+      		        auth.next(props.location, props.history);
+       		     }
+      		      return (loggedIn ? <MapEditorPage
                                   auth={auth}
                                   history={props.history}
                                   singleMapStore={getSingleMapStore(props.match.params.mapID)}/>
-                  : AuthRedirect)}/>
+                  	: AuthRedirect);
+          }}/>
         <Redirect from="*" to="/" />
       </Switch>
     </Router>
